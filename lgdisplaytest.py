@@ -39,19 +39,31 @@ surface.fill(pygame.Color('red'))
 def frac(n):
     return n - floor(n)
 
+grid_num_rows = 4
+grid_num_cols = 6
+
 # Next task: Calculate per-pixel colours.
 for y in range(size[1]):
     # Flip because Pygame has Y going down, GL has Y going up
     ty = 1-float(y)/size[1]
+
+    grid_row = grid_num_rows * y // size[1]
+
     for x in range(size[0]):
         rgb=[x%256,y%256,0]
         tx = float(x)/size[0]
+
+        grid_col = grid_num_cols * x // size[0]
+
         for i in range(3):
             a = (tx + i*subp + ty*tilt) * pitch - center
             # Sample view: white if viewed from right,
             # black if viewed from left, 
             # disturbing if viewed head on
-            rgb[i] = 255 if frac(a)<0.5 else 0
+            if grid_row % 2 == grid_col %2:
+                rgb[i] = 255 if frac(a)<0.5 else 0
+            else:
+                rgb[i] = 255 if frac(a)>0.5 else 0
         surface.set_at((x,y), pygame.Color(*rgb))
 pygame.display.update()
 
